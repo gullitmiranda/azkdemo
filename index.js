@@ -25,15 +25,16 @@ var app = express();
 require('./config')(app);
 
 // Which layout handlebars will render
-var layout;
-
-// Route
-app.get('/', function(req, res) {
-  layout = (req.locale == 'pt_BR') ? 'index_pt_br' : 'index_en';
-
+var render = function(req, res, step) {
+  var layout = (req.locale == 'pt_BR') ? 'index_pt_br' : 'index_en';
   // fill `seq` with the container that processed the request
   azkInstanceData.seq = process.env.AZK_SEQ;
-
+  var options = {
+    client: false,
+    counter: false,
+    step: step,
+    azkData: azkInstanceData,
+  };
   if (client) {
     // if database is plugged
     client.get('counter', function(err, counter) {
@@ -41,24 +42,29 @@ app.get('/', function(req, res) {
       counter = parseInt(counter || 0) + 1;
       client.set('counter', counter, function(err) {
         if (err) console.error(err);
-        res.render(layout, {
-          client: true,
-          counter: counter,
-          azkData: azkInstanceData,
-          step: 'commands'
-        });
+        options.client  = true;
+        options.counter = counter;
+        res.render(layout, options);
       })
     });
   } else {
-    // database is missing
-    res.render(layout, {
-      azkData: azkInstanceData,
-      client: false,
-      counter: false,
-      step: 'database'
-    });
-
+    res.render(layout, options);
   }
+};
+
+// Route
+app.get('/', function(req, res) {
+  var path = (!client) ? "/database" : "/commands";
+  res.redirect(path);
+});
+app.get('/database', function(req, res) {
+  render(req, res, "database");
+});
+app.get('/deploy', function(req, res) {
+  render(req, res, "deploy");
+});
+app.get('/commands', function(req, res) {
+  render(req, res, "commands");
 });
 
 app.listen(PORT);

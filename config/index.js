@@ -9,7 +9,14 @@ var AZK_UID   = process.env.AZK_UID;
 function Config(app) {
 
   // Creating express-handlebars instance with step's partials already registered
-  var hbs = exphbs.create({partialsDir: ['./views/steps/']});
+  var hbs = exphbs.create({
+    partialsDir: ['./views/steps/'],
+    helpers: {
+      equals: function (a, b) {
+        return (a == b);
+      }
+    },
+  });
 
   // Create simple logger middleware
   app.use(function(req, res, next){

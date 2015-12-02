@@ -43,22 +43,35 @@
       <p>Possuímos duas etapas para te ajudar com o <strong>azk</strong> e estender esta aplicação.</p>
       <p>Esperamos que você curta!</p>
 
-      <!-- if database client is not present -->
-      {{#unless client}}
+      <!-- show by step -->
+      {{#if equals step "database"}}
         <ol class="steps">
           <li><span class="step-btn step-btn--active">1. Banco de dados</span></li>
           <li><span class="step-btn step-btn--disabled">2. Outros Comandos</span></li>
-          <!-- Load 'database' partial -->
+          <li><span class="step-btn step-btn--disabled">3. Deploy</span></li>
         </ol>
+        <!-- Load 'database' partial -->
         {{> database_pt_br }}
-      {{^}}
-        <ol class="steps">
-          <li><span class="step-btn">✓ Banco de dados</span></li>
-          <li><span class="step-btn step-btn--active">2. Outros Comandos</span></li>
-          <!-- Load 'commands' partial -->
-        </ol>
-        {{> commands_pt_br }}
-      {{/unless}}
+        {{> gallery_pt_br }}
+      {{else}}
+        {{#if equals step "deploy"}}
+          <ol class="steps">
+            <li><span class="step-btn">✓ Banco de dados</span></li>
+            <li><a href="#commands" class="step-btn">2. Outros Comandos</a></li>
+            <li><a href="#deploy" class="step-btn step-btn--active">3. Deploy</a></li>
+          </ol>
+          <!-- Load 'deploy' partial -->
+          {{> deploy_pt_br }}
+        {{else}}
+          <ol class="steps">
+            <li><span class="step-btn">✓ Banco de dados</span></li>
+            <li><a href="#commands" class="step-btn step-btn--active">2. Outros Comandos</a></li>
+            <li><a href="#deploy" class="step-btn">3. Deploy</a></li>
+            <!-- Load 'commands' partial -->
+          </ol>
+          {{> commands_pt_br }}
+        {{/if}}
+      {{/if}}
 
       <div class="h-line"> &nbsp; </div>
 
